@@ -1,0 +1,42 @@
+# Initialize memory
+addi x11, x0, 1 00
+sw   x11, 0(x0) 04
+
+addi x11, x0, 2 08
+sw   x11, 4(x0) 0C
+
+addi x11, x0, 3 10
+sw   x11, 8(x0) 14
+
+# Load values
+lw   x1,  0(x0) 18
+lw   x2,  4(x0) 1C
+lw   x3,  8(x0)
+
+# Arithmetic
+add  x4,  x1, x2
+add  x5,  x2, x3
+add  x6,  x1, x3
+add  x7,  x4, x5
+add  x8,  x5, x6
+add  x9,  x4, x6
+add  x10, x7, x8
+
+
+00100593
+00b02023
+00200593
+00b02223
+00300593
+00b02423
+00002083
+00402103
+00802183
+00208233
+003102b3
+00308333
+005203b3
+00628433
+006204b3
+00838533
+

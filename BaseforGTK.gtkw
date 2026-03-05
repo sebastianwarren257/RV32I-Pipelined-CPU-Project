@@ -1,0 +1,43 @@
+[*]
+[*] GTKWave Analyzer v3.3.104 (w)1999-2020 BSI
+[*] Fri Feb  6 00:07:02 2026
+[*]
+[dumpfile] "/mnt/c/CPU project/pipeline.vcd"
+[dumpfile_mtime] "Thu Feb  5 23:13:38 2026"
+[dumpfile_size] 25247
+[savefile] "/mnt/c/CPU project/BaseforGTK.gtkw"
+[timestart] 0
+[size] 2548 1359
+[pos] 34687 32767
+*-14.000000 107720 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1 -1
+[treeopen] PipelinedProc_tb.
+[sst_width] 214
+[signals_width] 269
+[sst_expanded] 1
+[sst_vpaned_height] 419
+@22
+PipelinedProc_tb.CPU.MemToRegOut[31:0]
+PipelinedProc_tb.CPU.WB_memOut[31:0]
+PipelinedProc_tb.CPU.WB_ALUResult[31:0]
+@28
+PipelinedProc_tb.CPU.WB_MemToReg[1:0]
+PipelinedProc_tb.CPU.EX_Memread
+PipelinedProc_tb.CPU.MEM_Memread
+PipelinedProc_tb.CPU.Clk
+@22
+PipelinedProc_tb.CPU.IF_currentPC[31:0]
+PipelinedProc_tb.CPU.ID_currentPC[31:0]
+PipelinedProc_tb.CPU.EX_currentPC[31:0]
+PipelinedProc_tb.CPU.MEM_currentPC[31:0]
+PipelinedProc_tb.CPU.WB_currentPC[31:0]
+PipelinedProc_tb.CPU.IF_instruction[31:0]
+PipelinedProc_tb.CPU.MEM_memOut[31:0]
+@28
+PipelinedProc_tb.CPU.WB_RegWrite
+PipelinedProc_tb.CPU.ID_MemToReg[1:0]
+PipelinedProc_tb.CPU.EX_MemToReg[1:0]
+PipelinedProc_tb.CPU.MEM_MemToReg[1:0]
+@23
+PipelinedProc_tb.CPU.MEM_memOut[31:0]
+[pattern_trace] 1
+[pattern_trace] 0
