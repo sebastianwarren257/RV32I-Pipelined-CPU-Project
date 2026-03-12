@@ -10,8 +10,8 @@ module IDEX(
     output reg [31:0] rA3,rB3,
     input [1:0] MemToReg_in,
     output reg [1:0] MemToReg_out,
-    input RegWrite_in,Memread_in,Memwrite_in,ALUsrc2,Branch2,Jalr2,Jump2,
-    output reg RegWrite_out,Memread_out,Memwrite_out,ALUsrc3,Branch3,Jalr3,Jump3,
+    input RegWrite_in,Memread_in,Memwrite_in,ALUsrcB2,Branch2,Jalr2,Jump2,ALUsrcA2,
+    output reg RegWrite_out,Memread_out,Memwrite_out,ALUsrcB3,Branch3,Jalr3,Jump3,ALUsrcA3,
     input [2:0] ALUOp2,
     output reg [2:0] ALUOp3,
     input [31:0] imm32_2,
@@ -38,7 +38,8 @@ module IDEX(
                 Memread_out <= 1'b0;
                 Memwrite_out <= 1'b0;
                 MemToReg_out <= 2'b00;
-                ALUsrc3 <= 1'b0;
+                ALUsrcB3 <= 1'b0;
+                ALUsrcA3 <= 1'b0;
                 Branch3 <= 1'b0;
                 Jalr3 <= 1'b0;
                 Jump3 <= 1'b0;
@@ -59,7 +60,8 @@ module IDEX(
                 Memread_out <= 1'b0;
                 Memwrite_out <= 1'b0;
                 MemToReg_out <= 2'b00;
-                ALUsrc3 <= 1'b0;
+                ALUsrcB3 <= 1'b0;
+                ALUsrcA3 <= 1'b0;
                 Branch3 <= 1'b0;
                 Jalr3 <= 1'b0;
                 Jump3 <= 1'b0;
@@ -81,7 +83,8 @@ module IDEX(
                 Memread_out <= Memread_in;
                 Memwrite_out <= Memwrite_in;
                 MemToReg_out <= MemToReg_in;
-                ALUsrc3 <= ALUsrc2;
+                ALUsrcB3 <= ALUsrcB2;
+                ALUsrcA3 <= ALUsrcA2;
                 Branch3 <= Branch2;
                 Jalr3 <= Jalr2;
                 Jump3 <= Jump2;

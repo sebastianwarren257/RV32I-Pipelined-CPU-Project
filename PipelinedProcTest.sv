@@ -17,6 +17,12 @@ module PipelinedProc_tb;
         .MemToRegOut(MemToRegOut)
     );
 
+    // === Test name  ===
+    parameter TEST_NAME = "rv32ui-p-and";
+     
+    // === tohost address ===
+    parameter TOHOST_ADDR = 32'h80001000;
+
     // === Clock generation: toggles every 5 ns ===
     always begin
         #5 Clk = ~Clk;
@@ -29,27 +35,36 @@ module PipelinedProc_tb;
         $dumpvars(0, PipelinedProc_tb);
     end
 
+    // === Watch for tohost write (pass or fail) ===
     always @(posedge Clk) begin
+    if (!reset && CPU.DataMemory.tohost != 0) begin
+        if (CPU.DataMemory.tohost == 32'h1)
+            $display("PASS: %s", TEST_NAME);
+        else
+            $display("FAIL: %s (test case %0d failed)",
+                TEST_NAME, CPU.DataMemory.tohost >> 1);
+        $finish;
+    end
+end
+
+    // === Timeout Watching ===
+    initial begin
+        #500000;
+        $display("TIMEOUT: %s never wrote to tohost", TEST_NAME);
+        $finish;
+    end
+
+    // === Debug: first 10 cycles ===
+integer cycle_count;
+initial cycle_count = 0;
+
+always @(posedge Clk) begin
     if (!reset) begin
-        if (
-            CPU.DataMemory.memory[0] == 8'h01 &&
-            CPU.DataMemory.memory[1] == 8'h00 &&
-            CPU.DataMemory.memory[2] == 8'h00 &&
-            CPU.DataMemory.memory[3] == 8'h00
-        ) begin
-            $display("PASS (smoke test)");
-            $finish;
-        end
-        end
+        cycle_count <= cycle_count + 1;
+        if (cycle_count < 200)
+            $display("cycle=%0d PC=%h instr=%h", 
+                cycle_count, CPU.IF_currentPC, CPU.IF_instruction);
     end
-    always @(posedge Clk) begin
-  if (!reset) begin
-    if (CPU.MEM_MemWrite) begin
-      $display("STORE: addr=%h funct3=%b data=%h",
-        CPU.MEM_ALUResult, CPU.MEM_funct3, CPU.forwarded_store_data
-      );
-    end
-  end
 end
     // === Test procedure ===
     initial begin
@@ -58,19 +73,12 @@ end
         // Initial setup
         Clk     = 0;
         reset   = 1;
-        startPC = 0;
+        startPC = 32'h80000000;
 
         // Hold reset for a couple cycles (pipelines like this)
         #20 reset = 0;
 
         // Run long enough to fill + drain pipeline
-        repeat (20) begin
-            @(posedge Clk);
-            $display("WB MemToRegOut = %h", MemToRegOut);
-        end
-
-        $display("\n=== Finished Pipelined CPU Simulation ===\n");
-        $finish;
     end
 
 endmodule

@@ -5,8 +5,8 @@ module imem(
     reg [31:0] imem [16383:0];
     
     initial begin
-        $readmemh("imem.hex",imem); //load instructions into memory
+        $readmemh("tests/rv32ui-p-and.hex",imem, 0, 16383); //load instructions into memory
     end
 
-    assign instruction = imem[PC[31:2]];
+    assign instruction = imem[(PC - 32'h80000000) >> 2];
 endmodule

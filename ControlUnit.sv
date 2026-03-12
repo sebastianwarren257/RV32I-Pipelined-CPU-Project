@@ -5,7 +5,8 @@ module ControlUnit(
     output reg Memwrite,
     output reg [1:0]MemToReg,
     output reg [2:0] ALUOp,
-    output reg  ALUsrc,
+    output reg ALUsrcA,
+    output reg  ALUsrcB,
     output reg Branch,
     output reg Jalr,
     output reg Jump,
@@ -20,7 +21,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
                 ALUOp = 3'b010;
-                ALUsrc = 1'b0;
+                ALUsrcB = 1'b0;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -32,7 +34,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
                 ALUOp = 3'b011;
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -44,7 +47,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b01;
                 ALUOp = 3'b000;
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -56,7 +60,8 @@ module ControlUnit(
                 Memwrite = 1'b1;
                 MemToReg = 2'b00;
                 ALUOp = 3'b000;
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -68,7 +73,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
                 ALUOp = 3'b001;
-                ALUsrc = 1'b0;
+                ALUsrcB = 1'b0;
+                ALUsrcA = 1'b0;
                 Branch = 1'b1;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -80,7 +86,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b10;
                 ALUOp = 3'b000;
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b1;
@@ -92,7 +99,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b10;
                 ALUOp = 3'b000;
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b1;
                 Jump = 1'b0;
@@ -104,7 +112,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
                 ALUOp = 3'b100; //need to make a new case for LUI
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -116,7 +125,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
                 ALUOp = 3'b000;
-                ALUsrc = 1'b1;
+                ALUsrcB = 1'b1;
+                ALUsrcA = 1'b1;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;
@@ -128,7 +138,8 @@ module ControlUnit(
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
                 ALUOp = 3'b000;
-                ALUsrc = 1'b0;
+                ALUsrcB = 1'b0;
+                ALUsrcA = 1'b0;
                 Branch = 1'b0;
                 Jalr = 1'b0;
                 Jump = 1'b0;

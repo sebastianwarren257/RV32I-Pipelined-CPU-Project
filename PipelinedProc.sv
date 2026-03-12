@@ -36,7 +36,7 @@ module PipelinedProc(
     wire[31:0] ID_imm32;
     //control signals
     wire [1:0]ID_MemToReg;
-    wire ID_RegWrite,ID_Memread,ID_MemWrite,ID_ALUsrc,ID_Branch,ID_Jalr,ID_Jump;
+    wire ID_RegWrite,ID_Memread,ID_MemWrite,ID_ALUsrcB,ID_Branch,ID_Jalr,ID_Jump,ID_ALUsrcA;
     wire [2:0] ID_ALUOp;
     wire[2:0] sel;
     //pc
@@ -49,7 +49,7 @@ module PipelinedProc(
     reg [31:0] EX_currentPC;
     reg[31:0] EX_currentPCPlus4;
     reg [1:0] EX_MemToReg;
-    reg EX_RegWrite,EX_Memread,EX_MemWrite,EX_ALUsrc,EX_Branch,EX_Jalr,EX_Jump;
+    reg EX_RegWrite,EX_Memread,EX_MemWrite,EX_ALUsrcB,EX_Branch,EX_Jalr,EX_Jump,EX_ALUsrcA;
     //Alu connections
     wire[31:0] EX_ALUResult;
     wire zero;
@@ -143,7 +143,7 @@ module PipelinedProc(
         .Memwrite(ID_MemWrite),
         .MemToReg(ID_MemToReg),
         .ALUOp(ID_ALUOp),
-        .ALUsrc(ID_ALUsrc),
+        .ALUsrcB(ID_ALUsrcB),
         .Branch(ID_Branch),
         .Jalr(ID_Jalr),
         .Jump(ID_Jump),
@@ -214,8 +214,10 @@ module PipelinedProc(
         .Memwrite_out(EX_MemWrite),
         .MemToReg_in(ID_MemToReg),
         .MemToReg_out(EX_MemToReg),
-        .ALUsrc2(ID_ALUsrc),
-        .ALUsrc3(EX_ALUsrc),
+        .ALUsrcB2(ID_ALUsrcB),
+        .ALUsrcB3(EX_ALUsrcB),
+        .ALUsrcA2(ID_ALUsrcA),
+        .ALUsrcA3(EX_ALUsrcA),
         .Branch2(ID_Branch),
         .Branch3(EX_Branch),
         .Jalr2(ID_Jalr),
@@ -247,8 +249,8 @@ module PipelinedProc(
         .ALUCtrl(ALUCtrl)
     );
     ALU alu(
-        .A(forwardedA),
-        .B(EX_ALUsrc ? EX_imm32 : forwardedB),
+        .A(EX_ALUsrcA ? EX_currentPC : forwardedA),
+        .B(EX_ALUsrcB ? EX_imm32 : forwardedB),
         .ALUCtrl(ALUCtrl),
         .ALUResult(EX_ALUResult),
         .zero(zero)
@@ -319,7 +321,7 @@ module PipelinedProc(
         .funct3(MEM_funct3),
         .addr(MEM_ALUResult),
         .wri_data(forwarded_store_data),
-        .read_data(MEM_memOut),//memout filling with XXX 
+        .read_data(MEM_memOut),
         .Memread(MEM_Memread),
         .Memwrite(MEM_MemWrite)
     );

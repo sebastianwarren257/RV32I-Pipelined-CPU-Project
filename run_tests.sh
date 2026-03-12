@@ -1,0 +1,49 @@
+#!/bin/bash
+
+PASS=0
+FAIL=0
+ERRORS=()
+
+# Your CPU source files
+CPU_FILES="PipelinedProc.sv HazardDetection.sv IFID.sv IDEX.sv EXMEM.sv MEMWB.sv ALU.sv ALUControl.sv ControlUnit.sv ImmGen.sv RegFile.sv ProgramCounterPipelined.sv imem.sv dmem.sv defines.sv"
+
+echo "=== Running rv32ui Tests ==="
+echo ""
+
+for hex in /mnt/c/CPU_project/tests/rv32ui-p-*.hex; do
+    # Get test name without path and extension
+    TEST=$(basename "$hex" .hex)
+
+    # Update imem to load this test's hex file
+    sed -i "s|readmemh(\"tests/[^\"]*\"|readmemh(\"tests/${TEST}.hex\"|g" imem.sv
+    # Update testbench test name
+    sed -i "s|parameter TEST_NAME = \"[^\"]*\"|parameter TEST_NAME = \"${TEST}\"|g" PipelinedProcTest.sv
+
+    # Compile
+    iverilog -g2012 -o pipeline_test PipelinedProcTest.sv $CPU_FILES 2>/dev/null
+
+    # Run and capture output
+    RESULT=$(vvp pipeline_test 2>/dev/null | grep -E "PASS|FAIL|TIMEOUT")
+
+    if echo "$RESULT" | grep -q "PASS"; then
+        echo "✅ PASS: $TEST"
+        PASS=$((PASS + 1))
+    else
+        echo "❌ FAIL: $TEST — $RESULT"
+        FAIL=$((FAIL + 1))
+        ERRORS+=("$TEST")
+    fi
+done
+
+echo ""
+echo "=== Results ==="
+echo "PASSED: $PASS / $((PASS + FAIL))"
+echo "FAILED: $FAIL / $((PASS + FAIL))"
+
+if [ ${#ERRORS[@]} -gt 0 ]; then
+    echo ""
+    echo "Failed tests:"
+    for t in "${ERRORS[@]}"; do
+        echo "  - $t"
+    done
+fi

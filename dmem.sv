@@ -8,6 +8,8 @@ module dmem(
 );
     reg [7:0] memory [65535:0];//byte addressable 
     reg Memread_internal = 1'b0;
+    reg [31:0] tohost = 0;
+    wire [15:0] masked_addr = addr[15:0]; //masking to be able to write values outside of memory scope from tests into scope
     /*always @(posedge Clk) begin
         if (Memwrite) begin
             $display("*** DMEM WRITE: addr=0x%h, data=0x%h, funct3=%h @ time=%0t", 
@@ -37,19 +39,22 @@ module dmem(
     end
     always_ff @(posedge Clk) begin
         if(Memwrite) begin
+            if (addr == 32'h80001000) begin
+                tohost <=wri_data;
+            end
             case (funct3)
                 3'h0:begin //SB
-                    memory[addr] <=  wri_data[7:0];
+                    memory[masked_addr] <=  wri_data[7:0];
                 end
                 3'h1:begin //SH
-                    memory[addr] <=  wri_data[7:0];
-                    memory[addr+1] <=  wri_data[15:8];
+                    memory[masked_addr] <=  wri_data[7:0];
+                    memory[masked_addr+1] <=  wri_data[15:8];
                 end
                 3'h2:  begin //SW
-                    memory[addr] <=  wri_data[7:0];
-                    memory[addr+1] <=  wri_data[15:8];
-                    memory[addr+2] <=  wri_data[23:16];
-                    memory[addr+3] <= wri_data[31:24];
+                    memory[masked_addr] <=  wri_data[7:0];
+                    memory[masked_addr+1] <=  wri_data[15:8];
+                    memory[masked_addr+2] <=  wri_data[23:16];
+                    memory[masked_addr+3] <= wri_data[31:24];
                 end
             endcase
         end
@@ -59,27 +64,27 @@ module dmem(
         if(Memread_internal) begin
             case (funct3)
                 3'h0:begin //LB
-                    read_data[7:0] <= #1 memory[addr];
-                    read_data[31:8] <= #1 {24{memory[addr][7]}};
+                    read_data[7:0] <= #1 memory[masked_addr];
+                    read_data[31:8] <= #1 {24{memory[masked_addr][7]}};
                 end
                 3'h1:begin  //LH
-                    read_data[7:0] <= #1 memory[addr];
-                    read_data[15:8] <= #1 memory[addr+1];
-                    read_data[31:16] <= #1 {16{memory[addr+1][7]}};
+                    read_data[7:0] <= #1 memory[masked_addr];
+                    read_data[15:8] <= #1 memory[masked_addr+1];
+                    read_data[31:16] <= #1 {16{memory[masked_addr+1][7]}};
                 end
                 3'h2:begin //LW
-                    read_data[7:0] <= #1 memory[addr];
-                    read_data[15:8] <= #1 memory[addr+1];
-                    read_data[23:16] <= #1 memory[addr+2];
-                    read_data[31:24] <= #1 memory[addr+3];
+                    read_data[7:0] <= #1 memory[masked_addr];
+                    read_data[15:8] <= #1 memory[masked_addr+1];
+                    read_data[23:16] <= #1 memory[masked_addr+2];
+                    read_data[31:24] <= #1 memory[masked_addr+3];
                 end
                  3'h4: begin //LBU
-                    read_data[7:0] <= #1 memory[addr];
+                    read_data[7:0] <= #1 memory[masked_addr];
                     read_data[31:8] <= #1 24'b0;
                  end
                  3'h5:begin //LHU
-                    read_data[7:0] <= #1 memory[addr];
-                    read_data[15:8] <= #1 memory[addr+1];
+                    read_data[7:0] <= #1 memory[masked_addr];
+                    read_data[15:8] <= #1 memory[masked_addr+1];
                     read_data[31:16] <= #1 16'b0;
                  end
             endcase
