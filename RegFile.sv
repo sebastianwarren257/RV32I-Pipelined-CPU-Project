@@ -11,6 +11,12 @@ module RegisterFile(
 
     reg [31:0] regs [31:0];
 
+    integer i;
+    initial begin
+        for (i = 0; i < 32; i = i + 1)
+            regs[i] = 32'h0;
+    end
+
     wire sameA = WriE && (rDi != 5'd0) && (rDi == rAi); //bypass logic for write-first only when write-first needs to occur
     wire sameB = WriE && (rDi != 5'd0) && (rDi == rBi);
     assign rA = (rAi==5'd0) ? 32'b0 : sameA ? rD : regs[rAi];

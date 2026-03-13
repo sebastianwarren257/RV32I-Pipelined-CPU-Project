@@ -106,12 +106,12 @@ module ControlUnit(
                 Jump = 1'b0;
                 sel = `I_type;
             end
-            `INST_OP_LUI: begin //need to add this to aluCtrl/ALU
+            `INST_OP_LUI: begin 
                 RegWrite = 1'b1;
                 Memread = 1'b0;
                 Memwrite = 1'b0;
                 MemToReg = 2'b00;
-                ALUOp = 3'b100; //need to make a new case for LUI
+                ALUOp = 3'b100;
                 ALUsrcB = 1'b1;
                 ALUsrcA = 1'b0;
                 Branch = 1'b0;
@@ -119,7 +119,7 @@ module ControlUnit(
                 Jump = 1'b0;
                 sel = `U_type;
             end
-            `INST_OP_AUIPC: begin//same as LUI(need to add)
+            `INST_OP_AUIPC: begin
                 RegWrite = 1'b1;
                 Memread = 1'b0;
                 Memwrite = 1'b0;
@@ -131,6 +131,32 @@ module ControlUnit(
                 Jalr = 1'b0;
                 Jump = 1'b0;
                 sel = `U_type;
+            end
+            `INST_OP_ECALL: begin //implemented as NOP
+                RegWrite = 1'b0;
+                Memread = 1'b0;
+                Memwrite = 1'b0;
+                MemToReg = 2'b00;
+                ALUOp = 3'b000;
+                ALUsrcB = 1'b0;
+                ALUsrcA = 1'b0;
+                Branch = 1'b0;
+                Jalr = 1'b0;
+                Jump = 1'b0;
+                sel = `I_type;
+            end
+            `INST_OP_FENCE: begin //implemented as NOP
+                RegWrite = 1'b0;
+                Memread = 1'b0;
+                Memwrite = 1'b0;
+                MemToReg = 2'b00;
+                ALUOp = 3'b000;
+                ALUsrcB = 1'b0;
+                ALUsrcA = 1'b0;
+                Branch = 1'b0;
+                Jalr = 1'b0;
+                Jump = 1'b0;
+                sel = `I_type;
             end
             default: begin
                 RegWrite = 1'b0;

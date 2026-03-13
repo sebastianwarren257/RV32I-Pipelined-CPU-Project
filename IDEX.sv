@@ -66,12 +66,12 @@ module IDEX(
                 Jalr3 <= 1'b0;
                 Jump3 <= 1'b0;
                 ALUOp3 <= 3'b0;
-                imm32_3 <= imm32_2;
-                rWR_out <= rWR_in;
-                funct7_3 <= funct7_2;
-                funct3_3 <= funct3_2;
-                rs1_out <=rs1_in;
-                rs2_out <=rs2_in;
+                imm32_3 <= 32'b0;      
+                rWR_out <= 5'b0;       
+                funct7_3 <= 7'b0;      
+                funct3_3 <= 3'b0;      
+                rs1_out <= 5'b0;       
+                rs2_out <= 5'b0;       
             end
 
             else begin

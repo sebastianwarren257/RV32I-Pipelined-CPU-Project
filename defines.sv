@@ -7,7 +7,8 @@
 `define INST_OP_JALR   7'b1100111
 `define INST_OP_LUI    7'b0110111
 `define INST_OP_AUIPC  7'b0010111
-`define INST_OP_INV    7'b1110011
+`define INST_OP_FENCE  7'b0001111
+`define INST_OP_ECALL  7'b1110011
 
 `define ADD   4'b0000  // ALU control table
 `define SUB   4'b0001

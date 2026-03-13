@@ -144,6 +144,7 @@ module PipelinedProc(
         .MemToReg(ID_MemToReg),
         .ALUOp(ID_ALUOp),
         .ALUsrcB(ID_ALUsrcB),
+        .ALUsrcA(ID_ALUsrcA),
         .Branch(ID_Branch),
         .Jalr(ID_Jalr),
         .Jump(ID_Jump),

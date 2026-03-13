@@ -18,7 +18,7 @@ module PipelinedProc_tb;
     );
 
     // === Test name  ===
-    parameter TEST_NAME = "rv32ui-p-and";
+    parameter TEST_NAME = "rv32ui-p-add";
      
     // === tohost address ===
     parameter TOHOST_ADDR = 32'h80001000;
@@ -35,17 +35,20 @@ module PipelinedProc_tb;
         $dumpvars(0, PipelinedProc_tb);
     end
 
-    // === Watch for tohost write (pass or fail) ===
+    // === Watch for ecall write (pass or fail) ===
     always @(posedge Clk) begin
-    if (!reset && CPU.DataMemory.tohost != 0) begin
-        if (CPU.DataMemory.tohost == 32'h1)
-            $display("PASS: %s", TEST_NAME);
-        else
-            $display("FAIL: %s (test case %0d failed)",
-                TEST_NAME, CPU.DataMemory.tohost >> 1);
-        $finish;
+        if (!reset && CPU.ID_instruction == 32'h00000073) begin
+            repeat(4) @(posedge Clk);//waits 4 cycles after ecall so its in WB
+            if (CPU.RegFile.regs[17] == 32'd93) begin
+                if (CPU.RegFile.regs[10] == 32'd0)
+                    $display("PASS: %s", TEST_NAME);
+                else
+                    $display("FAIL: %s (exit code %0d)",
+                        TEST_NAME, CPU.RegFile.regs[10]);
+                $finish;
+            end
+        end
     end
-end
 
     // === Timeout Watching ===
     initial begin
@@ -61,9 +64,13 @@ initial cycle_count = 0;
 always @(posedge Clk) begin
     if (!reset) begin
         cycle_count <= cycle_count + 1;
-        if (cycle_count < 200)
-            $display("cycle=%0d PC=%h instr=%h", 
-                cycle_count, CPU.IF_currentPC, CPU.IF_instruction);
+        if (cycle_count < 550)
+            $display("cycle=%0d PC=%h instr=%h", cycle_count, CPU.IF_currentPC, CPU.IF_instruction);
+        if (!reset && CPU.IF_currentPC == 32'h800006a8)
+            $display("AT ECALL: a7(x17)=%0d a0(x10)=%0d gp(x3)=%0d",
+                CPU.RegFile.regs[17],
+                CPU.RegFile.regs[10],
+                CPU.RegFile.regs[3]);
     end
 end
     // === Test procedure ===
