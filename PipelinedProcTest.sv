@@ -18,7 +18,7 @@ module PipelinedProc_tb;
     );
 
     // === Test name  ===
-    parameter TEST_NAME = "rv32ui-p-add";
+    parameter TEST_NAME = "rv32ui-p-xori";
      
     // === tohost address ===
     parameter TOHOST_ADDR = 32'h80001000;
