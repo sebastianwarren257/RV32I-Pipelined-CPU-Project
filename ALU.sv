@@ -32,7 +32,7 @@ module ALU(
                 ALUResult = A>>B[4:0];
             end
             `SRA: begin
-                ALUResult = A>>>B[4:0];
+                ALUResult = $signed(A)>>>B[4:0];
             end
             `SLTU: begin
                 ALUResult = (A<B) ? 32'b1:32'b0;

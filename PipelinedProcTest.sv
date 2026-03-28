@@ -62,16 +62,10 @@ integer cycle_count;
 initial cycle_count = 0;
 
 always @(posedge Clk) begin
-    if (!reset) begin
-        cycle_count <= cycle_count + 1;
-        if (cycle_count < 550)
-            $display("cycle=%0d PC=%h instr=%h", cycle_count, CPU.IF_currentPC, CPU.IF_instruction);
-        if (!reset && CPU.IF_currentPC == 32'h800006a8)
-            $display("AT ECALL: a7(x17)=%0d a0(x10)=%0d gp(x3)=%0d",
-                CPU.RegFile.regs[17],
-                CPU.RegFile.regs[10],
-                CPU.RegFile.regs[3]);
-    end
+    if (!reset && CPU.EX_Jalr)
+        $display("JALR: PC=%h rs1=%h imm=%h target=%h redirect=%b",
+            CPU.EX_currentPC, CPU.forwardedA, 
+            CPU.EX_imm32, CPU.redirect_target, CPU.redirect_valid);
 end
     // === Test procedure ===
     initial begin

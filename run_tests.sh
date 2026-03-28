@@ -4,25 +4,30 @@ PASS=0
 FAIL=0
 ERRORS=()
 
-# Your CPU source files
-CPU_FILES="PipelinedProc.sv HazardDetection.sv IFID.sv IDEX.sv EXMEM.sv MEMWB.sv ALU.sv ALUControl.sv ControlUnit.sv ImmGen.sv RegFile.sv ProgramCounterPipelined.sv imem.sv dmem.sv defines.sv"
+CPU_FILES="PipelinedProc.sv HazardDetection.sv IFID.sv IDEX.sv EXMEM.sv MEMWB.sv ALU.sv ALUControl.sv ControlUnit.sv ImmGen.sv ProgramCounter.sv ProgramCounterPipelined.sv RegFile.sv defines.sv imem.sv dmem.sv"
 
 echo "=== Running rv32ui Tests ==="
 echo ""
 
 for hex in /mnt/c/CPU_project/tests/rv32ui-p-*.hex; do
-    # Get test name without path and extension
+    # Skip dmem hex files
+    [[ "$hex" == *.dmem.hex ]] && continue
+
     TEST=$(basename "$hex" .hex)
 
-    # Update imem to load this test's hex file
-    sed -i "s|readmemh(\"tests/[^\"]*\"|readmemh(\"tests/${TEST}.hex\"|g" imem.sv
-    # Update testbench test name
+    # Swap imem hex
+    sed -i "s|readmemh(\"tests/[^\"]*\.hex\"|readmemh(\"tests/${TEST}.hex\"|g" imem.sv
+
+    # Swap dmem hex
+    sed -i "s|readmemh(\"tests/[^\"]*\.dmem\.hex\"|readmemh(\"tests/${TEST}.dmem.hex\"|g" dmem.sv
+
+    # Swap test name
     sed -i "s|parameter TEST_NAME = \"[^\"]*\"|parameter TEST_NAME = \"${TEST}\"|g" PipelinedProcTest.sv
 
     # Compile
     iverilog -g2012 -o pipeline_test PipelinedProcTest.sv $CPU_FILES 2>/dev/null
 
-    # Run and capture output
+    # Run
     RESULT=$(vvp pipeline_test 2>/dev/null | grep -E "PASS|FAIL|TIMEOUT")
 
     if echo "$RESULT" | grep -q "PASS"; then

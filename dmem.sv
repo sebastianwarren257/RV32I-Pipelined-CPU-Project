@@ -25,11 +25,14 @@ module dmem(
     $display("MEM[0x10..0x13] = %h%h%h%h",
              memory[19], memory[18], memory[17], memory[16]);
     end*/
-    integer i;
+    /*integer i; //initializes dmem to all 0s
     initial begin
     for (i = 0; i < 65536; i = i + 1) begin
         memory[i] = 8'h00;
     end
+    end*/
+    initial begin //intializes dmem with values from hex file
+    $readmemh("tests/rv32ui-p-xori.dmem.hex", memory);
     end
     always @(posedge Clk or posedge Memread)begin
         if(Memread) begin
@@ -41,26 +44,27 @@ module dmem(
         if(Memwrite) begin
             if (addr == 32'h80001000) begin
                 tohost <=wri_data;
+            end else begin
+                case (funct3)
+                    3'h0:begin //SB
+                        memory[masked_addr] <=  wri_data[7:0];
+                    end
+                    3'h1:begin //SH
+                        memory[masked_addr] <=  wri_data[7:0];
+                        memory[masked_addr+1] <=  wri_data[15:8];
+                    end
+                    3'h2:  begin //SW
+                        memory[masked_addr] <=  wri_data[7:0];
+                        memory[masked_addr+1] <=  wri_data[15:8];
+                        memory[masked_addr+2] <=  wri_data[23:16];
+                        memory[masked_addr+3] <= wri_data[31:24];
+                    end
+                endcase
             end
-            case (funct3)
-                3'h0:begin //SB
-                    memory[masked_addr] <=  wri_data[7:0];
-                end
-                3'h1:begin //SH
-                    memory[masked_addr] <=  wri_data[7:0];
-                    memory[masked_addr+1] <=  wri_data[15:8];
-                end
-                3'h2:  begin //SW
-                    memory[masked_addr] <=  wri_data[7:0];
-                    memory[masked_addr+1] <=  wri_data[15:8];
-                    memory[masked_addr+2] <=  wri_data[23:16];
-                    memory[masked_addr+3] <= wri_data[31:24];
-                end
-            endcase
         end
     end
 
-    always_ff @(posedge Memread_internal or posedge Clk) begin //works like this but reads a cycle late so everything is pushed back and messes up. Ask if should be combinational or not and how to fix.
+    always_ff @(posedge Memread_internal or posedge Clk) begin 
         if(Memread_internal) begin
             case (funct3)
                 3'h0:begin //LB

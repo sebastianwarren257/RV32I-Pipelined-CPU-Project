@@ -270,7 +270,7 @@ module PipelinedProc(
     end
     always_comb begin 
         if(EX_Jalr) begin
-            redirect_target = (EX_rA + EX_imm32) & ~32'd1;
+            redirect_target = (forwardedA + EX_imm32) & ~32'd1;
             redirect_valid = 1;
         end
         else if(EX_Jump) begin
